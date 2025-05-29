@@ -71,13 +71,13 @@ export async function createFavoriteArtist(artist, topTracks = []) {
 }
 
 // Genre-Statistiken aktualisieren
-export async function updateGenres(genres) {
+export async function updateGenres(genres, delta = 1) {
   try {
     const collection = db.collection("genres");
     for (const genre of genres) {
       await collection.updateOne(
         { name: genre },
-        { $inc: { count: 1 } },
+        { $inc: { count: delta } },
         { upsert: true }
       );
     }
@@ -90,11 +90,13 @@ export async function updateGenres(genres) {
 export async function getTopGenres(limit = 10) {
   try {
     const collection = db.collection("genres");
-    return await collection
+    const genres = await collection
       .find({})
       .sort({ count: -1 })
       .limit(limit)
       .toArray();
+    // Convert _id to string for serialization
+    return genres.map(g => ({ ...g, _id: g._id.toString() }));
   } catch (error) {
     console.log(error.message);
     return [];
@@ -102,15 +104,22 @@ export async function getTopGenres(limit = 10) {
 }
 
 // Künstler löschen (per Spotify-ID)
-export async function deleteFavoriteArtist(id) {
+export async function deleteFavoriteArtistBySpotifyId(spotifyId) {
   try {
     const collection = db.collection("favoriteArtists");
-    const result = await collection.deleteOne({ _id: id });
 
+    const artist = await collection.findOne({ _id: spotifyId });
+    if (!artist) {
+      console.log("No artist with ID " + spotifyId);
+      return null;
+    }
+
+    const result = await collection.deleteOne({ _id: spotifyId });
     if (result.deletedCount > 0) {
-      return id;
+      await updateGenres(artist.genres, -1); // Decrement genre stats
+      return spotifyId;
     } else {
-      console.log("No artist with id " + id);
+      console.log("Could not delete artist with ID " + spotifyId);
       return null;
     }
   } catch (error) {

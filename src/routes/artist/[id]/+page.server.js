@@ -1,5 +1,5 @@
 import { getSpotifyAccessToken } from '$lib/server/spotify';
-import { createFavoriteArtist, updateGenres, getFavoriteArtistById } from '$lib/server/db.js';
+import { createFavoriteArtist, updateGenres, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from '$lib/server/db.js';
 import { redirect } from '@sveltejs/kit';
 
 
@@ -45,7 +45,7 @@ export async function load({ params, fetch }) {
 }
 
 export const actions = {
-    default: async ({ request }) => {
+    save: async ({ request }) => {
         const data = await request.formData();
         const artist = JSON.parse(data.get('artist'));
         const topTracks = JSON.parse(data.get('topTracks') ?? '[]');
@@ -53,6 +53,13 @@ export const actions = {
         await createFavoriteArtist(artist, topTracks);
         await updateGenres(artist.genres);
 
+        throw redirect(303, '/favorites');
+    },
+
+    delete: async ({ request }) => {
+        const data = await request.formData();
+        const id = data.get('id'); // spotifyId
+        await deleteFavoriteArtistBySpotifyId(id);
         throw redirect(303, '/favorites');
     }
 };

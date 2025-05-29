@@ -19,6 +19,7 @@
 	"dependencies": {
 		"bootstrap": "^5.3.6",
 		"bootstrap-icons": "^1.13.1",
+		"chart.js": "^4.4.9",
 		"mongodb": "^6.16.0",
 		"svelte-runes": "^0.0.7"
 	}

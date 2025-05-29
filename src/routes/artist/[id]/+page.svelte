@@ -15,21 +15,32 @@
   followers={artist.followers?.total ?? 0}
 />
 
-<form method="POST" class="mt-4">
-  <input type="hidden" name="artist" value={JSON.stringify(artist)} />
-  <input type="hidden" name="topTracks" value={JSON.stringify(topTracks)} />
-  <button
-    type="submit"
-    class="btn btn-outline-light d-flex align-items-center gap-2"
-    disabled={isFavorite}
-  >
-    <i class={`bi ${isFavorite ? 'bi-heart-fill' : 'bi-heart'}`}></i>
-    {#if isFavorite}
-      Bereits gespeichert
-    {:else}
+{#if !isFavorite}
+  <form method="POST" class="mt-4">
+    <input type="hidden" name="artist" value={JSON.stringify(artist)} />
+    <input type="hidden" name="topTracks" value={JSON.stringify(topTracks)} />
+    <button
+      type="submit"
+      formaction="?/save"
+      class="btn btn-outline-light d-flex align-items-center gap-2"
+    >
+      <i class="bi bi-heart"></i>
       Als Favorit speichern
-    {/if}
-  </button>
-</form>
+    </button>
+  </form>
+{:else}
+  <form method="POST" class="mt-4">
+    <input type="hidden" name="id" value={artist.id} />
+    <button
+      type="submit"
+      formaction="?/delete"
+      class="btn btn-outline-danger d-flex align-items-center gap-2"
+    >
+      <i class="bi bi-trash"></i>
+      Entfernen
+    </button>
+  </form>
+{/if}
+
 
 <TopTracks tracks={topTracks} />
