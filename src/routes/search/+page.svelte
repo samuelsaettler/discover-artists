@@ -26,7 +26,7 @@
             <a href={`/artist/${artist.id}`} class="text-decoration-none">
               <ArtistCard
                 name={artist.name}
-                image={artist.image ?? 'https://placehold.co/300x300'}
+                image={artist.image}
               />
             </a>
           </div>

@@ -1,46 +1,28 @@
-import { getSpotifyAccessToken } from '$lib/server/spotify';
-import { createFavoriteArtist, updateGenres, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from '$lib/server/db.js';
+import {
+    fetchSpotifyArtist,
+    fetchSpotifyTopTracks
+} from '$lib/server/spotify';
+
+import {
+    createFavoriteArtist,
+    updateGenres,
+    getFavoriteArtistById,
+    deleteFavoriteArtistBySpotifyId
+} from '$lib/server/db';
+
 import { redirect } from '@sveltejs/kit';
 
-
-export async function load({ params, fetch }) {
-    const token = await getSpotifyAccessToken();
-
-    // Artist-Daten holen
-    const artistRes = await fetch(`https://api.spotify.com/v1/artists/${params.id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    if (!artistRes.ok) {
-        throw new Error('Konnte Artist nicht laden');
-    }
-
-    const artist = await artistRes.json();
+export async function load({ params }) {
+    const artist = await fetchSpotifyArtist(params.id);
     // console.log('Artist-Daten:', artist);
-
-    // Top-Tracks von Artist holen
-    const tracksRes = await fetch(`https://api.spotify.com/v1/artists/${params.id}/top-tracks?market=CH`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    if (!tracksRes.ok) {
-        throw new Error('Konnte Tracks nicht laden');
-    }
-
-    const topTracks = await tracksRes.json();
-    //console.log('Top-Tracks:', topTracks);
-
-    // Überprüfe, ob der Künstler bereits in den Favoriten ist (zum speichern)
+    const topTracks = await fetchSpotifyTopTracks(params.id);
+    // console.log('TopTracks-Daten:', topTracks);
     const existing = await getFavoriteArtistById(artist.id);
 
     return {
         artist,
-        topTracks: topTracks.tracks,
-        isFavorite: !!existing
+        topTracks,
+        isFavorite: !!existing // Überprüft ob wenn ein Eintrag = true, wenn null dann false
     };
 }
 
@@ -58,7 +40,7 @@ export const actions = {
 
     delete: async ({ request }) => {
         const data = await request.formData();
-        const id = data.get('id'); // spotifyId
+        const id = data.get('id');
         await deleteFavoriteArtistBySpotifyId(id);
         throw redirect(303, '/favorites');
     }
