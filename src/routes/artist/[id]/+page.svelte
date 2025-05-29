@@ -1,19 +1,17 @@
 <script>
-    const { data } = $props();
-    const { artist } = data;
-    if (!artist) {
-        console.error('No artist data');
-    }
+  import ArtistCard from "$lib/components/ArtistCard.svelte";
+  import TopTracks from "$lib/components/TopTracks.svelte";
+  const { data } = $props();
+  const artist = data?.artist;
+  const topTracks = data?.topTracks ?? [];
 </script>
 
-<h1>{artist.name}</h1>
+<ArtistCard
+  name={artist.name}
+  image={artist.images?.[0]?.url ?? "https://placehold.co/300x300"}
+  genres={artist.genres}
+  popularity={artist.popularity}
+  followers={artist.followers?.total ?? 0}
+/>
 
-{#if artist.image}
-	<img src={artist.image} alt={artist.name} style="max-width: 300px;" />
-{/if}
-
-<p><strong>Genres:</strong> {artist.genres.join(', ')}</p>
-<p><strong>Followers:</strong> {artist.followers.toLocaleString()}</p>
-<p><strong>Popularity:</strong> {artist.popularity}</p>
-
-<a href="/search" class="btn btn-secondary mt-3">Zurück zur Suche</a>
+<TopTracks tracks={topTracks} />

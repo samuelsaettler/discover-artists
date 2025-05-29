@@ -1,2 +1,4 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<div class="container mt-5">
+    <h1>Willkommen bei Discover Artists</h1>
+    <a class="btn btn-primary mt-3" href="/search">Zu der Artisten suche</a>
+</div>

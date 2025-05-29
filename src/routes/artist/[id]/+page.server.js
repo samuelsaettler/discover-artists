@@ -1,45 +1,38 @@
-import { error } from '@sveltejs/kit';
-import { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from '$env/static/private';
+import { getSpotifyAccessToken } from '$lib/server/spotify';
 
-async function getSpotifyToken() {
-	const res = await fetch('https://accounts.spotify.com/api/token', {
-		method: 'POST',
-		headers: {
-			Authorization:
-				'Basic ' +
-				Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64'),
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body: 'grant_type=client_credentials'
-	});
+export async function load({ params, fetch }) {
+    const token = await getSpotifyAccessToken();
 
-	const data = await res.json();
-	return data.access_token;
-}
+    // Artist-Daten holen
+    const artistRes = await fetch(`https://api.spotify.com/v1/artists/${params.id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ params }) {
-	const token = await getSpotifyToken();
-	const artistId = params.id;
+    if (!artistRes.ok) {
+        throw new Error('Konnte Artist nicht laden');
+    }
 
-	const res = await fetch(`https://api.spotify.com/v1/artists/${artistId}`, {
-		headers: {
-			Authorization: `Bearer ${token}`
-		}
-	});
+    const artist = await artistRes.json();
+    // console.log('Artist-Daten:', artist);
 
-	if (!res.ok) throw error(500, 'Künstler konnte nicht geladen werden');
+    // Top-Tracks von Artist holen
+    const tracksRes = await fetch(`https://api.spotify.com/v1/artists/${params.id}/top-tracks?market=CH`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
 
-	const artist = await res.json();
+    if (!tracksRes.ok) {
+        throw new Error('Konnte Tracks nicht laden');
+    }
 
-	return {
-		artist: {
-			id: artist.id,
-			name: artist.name,
-			image: artist.images[0]?.url ?? '',
-			genres: artist.genres,
-			popularity: artist.popularity,
-			followers: artist.followers.total
-		}
-	};
+    const topTracks = await tracksRes.json();
+    //console.log('Top-Tracks:', topTracks);
+
+    return { 
+        artist,
+        topTracks: topTracks.tracks
+     };
 }

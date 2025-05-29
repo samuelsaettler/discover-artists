@@ -1,0 +1,16 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+    background-color: #000;
+    color: white;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+  }
+  
+  .card-img-top {
+    object-fit: cover;
+    height: 100%;
+  }
+  
