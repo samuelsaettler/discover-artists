@@ -1,4 +1,7 @@
 import { getSpotifyAccessToken } from '$lib/server/spotify';
+import { createFavoriteArtist, updateGenres, getFavoriteArtistById } from '$lib/server/db.js';
+import { redirect } from '@sveltejs/kit';
+
 
 export async function load({ params, fetch }) {
     const token = await getSpotifyAccessToken();
@@ -31,8 +34,25 @@ export async function load({ params, fetch }) {
     const topTracks = await tracksRes.json();
     //console.log('Top-Tracks:', topTracks);
 
-    return { 
+    // Überprüfe, ob der Künstler bereits in den Favoriten ist (zum speichern)
+    const existing = await getFavoriteArtistById(artist.id);
+
+    return {
         artist,
-        topTracks: topTracks.tracks
-     };
+        topTracks: topTracks.tracks,
+        isFavorite: !!existing
+    };
 }
+
+export const actions = {
+    default: async ({ request }) => {
+        const data = await request.formData();
+        const artist = JSON.parse(data.get('artist'));
+        const topTracks = JSON.parse(data.get('topTracks') ?? '[]');
+
+        await createFavoriteArtist(artist, topTracks);
+        await updateGenres(artist.genres);
+
+        throw redirect(303, '/favorites');
+    }
+};

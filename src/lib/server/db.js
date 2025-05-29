@@ -1,4 +1,4 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { DB_URI } from "$env/static/private";
 
 const client = new MongoClient(DB_URI);
@@ -9,29 +9,23 @@ const db = client.db("DiscoverArtists");
 // Favorite Artists
 //////////////////////////////////////////
 
-// Get all favorite artists
-async function getFavoriteArtists() {
-  let artists = [];
+// Alle gespeicherten Künstler laden
+export async function getFavoriteArtists() {
   try {
     const collection = db.collection("favoriteArtists");
-    const query = {};
-    artists = await collection.find(query).toArray();
-    artists.forEach((artist) => {
-      artist._id = artist._id.toString();
-    });
+    const artists = await collection.find({}).toArray();
+    return artists.map(artist => ({ ...artist, _id: artist._id.toString() }));
   } catch (error) {
     console.log(error);
+    return [];
   }
-  return artists;
 }
 
-// Get favorite artist by _id
-async function getFavoriteArtistById(id) {
+// Einzelnen Künstler laden (per Spotify-ID)
+export async function getFavoriteArtistById(id) {
   try {
     const collection = db.collection("favoriteArtists");
-    const query = { _id: new ObjectId(id) };
-    const artist = await collection.findOne(query);
-
+    const artist = await collection.findOne({ _id: id });
     if (artist) artist._id = artist._id.toString();
     return artist;
   } catch (error) {
@@ -40,22 +34,20 @@ async function getFavoriteArtistById(id) {
   }
 }
 
-// artist = full artist object from Spotify
-// topTracks = array of top tracks from Spotify
-async function createFavoriteArtist(artist, topTracks = []) {
+// Künstler speichern
+export async function createFavoriteArtist(artist, topTracks = []) {
   try {
     const collection = db.collection("favoriteArtists");
 
-    // Check if artist already exists
-    const existing = await collection.findOne({ id: artist.id });
+    // Duplikate vermeiden
+    const existing = await collection.findOne({ _id: artist.id });
     if (existing) {
       console.log("Artist already in favorites");
-      return existing._id.toString();
+      return existing._id;
     }
 
-    // Build the artist object to insert
     const favoriteArtist = {
-      id: artist.id,
+      _id: artist.id, // Spotify-ID als MongoDB-ID
       name: artist.name,
       image: artist.images?.[0]?.url ?? '',
       genres: artist.genres,
@@ -71,15 +63,15 @@ async function createFavoriteArtist(artist, topTracks = []) {
     };
 
     const result = await collection.insertOne(favoriteArtist);
-    return result.insertedId.toString();
+    return result.insertedId;
   } catch (error) {
     console.log(error.message);
     return null;
   }
 }
 
-// Update genre stats
-async function updateGenres(genres) {
+// Genre-Statistiken aktualisieren
+export async function updateGenres(genres) {
   try {
     const collection = db.collection("genres");
     for (const genre of genres) {
@@ -94,8 +86,8 @@ async function updateGenres(genres) {
   }
 }
 
-// Get top genres (sorted)
-async function getTopGenres(limit = 10) {
+// Top-Genres abrufen
+export async function getTopGenres(limit = 10) {
   try {
     const collection = db.collection("genres");
     return await collection
@@ -109,12 +101,11 @@ async function getTopGenres(limit = 10) {
   }
 }
 
-// Delete favorite artist by _id
-async function deleteFavoriteArtist(id) {
+// Künstler löschen (per Spotify-ID)
+export async function deleteFavoriteArtist(id) {
   try {
     const collection = db.collection("favoriteArtists");
-    const query = { _id: new ObjectId(id) };
-    const result = await collection.deleteOne(query);
+    const result = await collection.deleteOne({ _id: id });
 
     if (result.deletedCount > 0) {
       return id;
@@ -127,12 +118,3 @@ async function deleteFavoriteArtist(id) {
     return null;
   }
 }
-
-export default {
-  getFavoriteArtists,
-  getFavoriteArtistById,
-  createFavoriteArtist,
-  deleteFavoriteArtist,
-  updateGenres,
-  getTopGenres,
-};

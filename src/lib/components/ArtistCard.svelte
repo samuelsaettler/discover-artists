@@ -5,7 +5,7 @@
 <div class="card h-100 bg-dark text-white border-0">
   <img src={image} class="card-img-top" alt={name} />
   <div class="card-body p-2">
-    <h5 class="card-title mb-1">{name}</h5>
+    <h3 class="card-title mb-1">{name}</h3>
 
     {#if genres.length > 0}
       <p class="card-text mb-0">

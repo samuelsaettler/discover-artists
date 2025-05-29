@@ -18,6 +18,8 @@
 	},
 	"dependencies": {
 		"bootstrap": "^5.3.6",
+		"bootstrap-icons": "^1.13.1",
+		"mongodb": "^6.16.0",
 		"svelte-runes": "^0.0.7"
 	}
 }
