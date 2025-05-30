@@ -10,7 +10,7 @@
         type="text"
         name="q"
         class="form-control me-2"
-        placeholder="Z. B. Daft Punk"
+        placeholder="Daft Punk, The Weekend, etc."
         required
       />
       <button type="submit" class="btn btn-primary">Suchen</button>

@@ -1,7 +1,7 @@
 <script>
     import ArtistCard from "$lib/components/ArtistCard.svelte";
     const { data } = $props();
-    const artists = data.artists ?? [];
+    const artists = data?.artists ?? [];
 </script>
 
 <h1 class="mb-4">Gespeicherte Künstler</h1>

@@ -1,15 +1,5 @@
-import {
-    fetchSpotifyArtist,
-    fetchSpotifyTopTracks
-} from '$lib/server/spotify';
-
-import {
-    createFavoriteArtist,
-    updateGenres,
-    getFavoriteArtistById,
-    deleteFavoriteArtistBySpotifyId
-} from '$lib/server/db';
-
+import { fetchSpotifyArtist, fetchSpotifyTopTracks } from '$lib/server/spotify';
+import { createFavoriteArtist, updateGenres, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from '$lib/server/db';
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ params }) {
@@ -22,19 +12,17 @@ export async function load({ params }) {
     return {
         artist,
         topTracks,
-        isFavorite: !!existing // Überprüft ob wenn ein Eintrag = true, wenn null dann false
+        isFavorite: existing !== null // Überprüft ob der Künstler bereits favorisiert ist
     };
 }
 
 export const actions = {
     save: async ({ request }) => {
         const data = await request.formData();
+        // Strings von Form wieder zu Objekten umwandeln
         const artist = JSON.parse(data.get('artist'));
         const topTracks = JSON.parse(data.get('topTracks') ?? '[]');
-
         await createFavoriteArtist(artist, topTracks);
-        await updateGenres(artist.genres);
-
         throw redirect(303, '/favorites');
     },
 

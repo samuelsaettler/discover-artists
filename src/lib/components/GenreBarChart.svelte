@@ -1,19 +1,20 @@
 <script>
   import { onMount } from 'svelte';
   import Chart from 'chart.js/auto';
-  const { genres } = $props();
+  const { genres } = $props(); // Array: [{ name: 'rap', count: 5 }, etc.]
 
-  // Chart erstellung mithilfe von ChatGPT generiert
+  // Chart erstellung mithilfe von ChatGPT generiert (als library chart.js)
   let canvas;
 
   onMount(() => {
+    // Neues Balkendiagramm erstellen
     const chart = new Chart(canvas, {
       type: 'bar',
       data: {
-        labels: genres.map((g) => g.name),
+        labels: genres.map((genre) => genre.name),
         datasets: [{
-          label: 'Genre Count',
-          data: genres.map((g) => g.count),
+          label: 'Anzahl der Künstler pro Genre',
+          data: genres.map((genre) => genre.count),
           backgroundColor: '#36a2eb'
         }]
       },
@@ -23,7 +24,12 @@
           legend: { display: false }
         },
         scales: {
-          y: { beginAtZero: true }
+          y: { beginAtZero: true },
+          x: {
+            ticks: {
+              color: 'white' // Schrift auf der X-Achse weiss
+            }
+          }
         }
       }
     });

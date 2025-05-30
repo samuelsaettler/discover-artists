@@ -64,6 +64,11 @@ export async function createFavoriteArtist(artist, topTracks = []) {
     };
 
     const result = await artistCollection.insertOne(doc);
+    if (result.acknowledged) {
+      await updateGenres(artist.genres);
+      console.log('Genres', artist.genres, 'updated.');
+    }
+
     return result.insertedId;
   } catch (err) {
     console.error("Error saving artist:", err);
@@ -86,7 +91,6 @@ export async function deleteFavoriteArtistBySpotifyId(spotifyId) {
       return spotifyId;
     }
 
-    console.log(`Could not delete artist with ID: ${spotifyId}`);
     return null;
   } catch (err) {
     console.error("Error deleting artist:", err);

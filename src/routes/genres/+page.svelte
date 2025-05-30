@@ -1,8 +1,10 @@
 <script>
-  import GenreBarChart from '$lib/components/GenreBarChart.svelte';
+  import GenreBarChart from "$lib/components/GenreBarChart.svelte";
   const { data } = $props();
+  const genres = data?.genres ?? [];
 </script>
 
 <h1>Top Genres</h1>
-
-<GenreBarChart genres={data.genres} />
+<div class="chart-container">
+  <GenreBarChart {genres} />
+</div>
