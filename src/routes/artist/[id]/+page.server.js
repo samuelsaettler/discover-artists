@@ -1,5 +1,5 @@
 import { fetchSpotifyArtist, fetchSpotifyTopTracks } from '$lib/server/spotify';
-import { createFavoriteArtist, updateGenres, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from '$lib/server/db';
+import { createFavoriteArtist, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from '$lib/server/db';
 import { redirect } from '@sveltejs/kit';
 
 export async function load({ params }) {

@@ -1,9 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import Chart from 'chart.js/auto';
-  const { genres } = $props(); // Array: [{ name: 'rap', count: 5 }, etc.]
+  const { genres } = $props(); // Array mit name und count: [{ name: 'rap', count: 5 }, etc.]
 
-  // Chart erstellung mithilfe von ChatGPT generiert (als library chart.js)
   let canvas;
 
   onMount(() => {
@@ -15,7 +14,7 @@
         datasets: [{
           label: 'Anzahl der Künstler pro Genre',
           data: genres.map((genre) => genre.count),
-          backgroundColor: '#36a2eb'
+          backgroundColor: '#1DB954' // Farbe der Balken
         }]
       },
       options: {

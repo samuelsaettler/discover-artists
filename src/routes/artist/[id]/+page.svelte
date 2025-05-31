@@ -12,7 +12,7 @@
     <a href="#" onclick={history.back()} class="text-light mb-3 d-inline-block">← Zurück</a>
 
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-4 d-flex flex-column">
         <ArtistCard
           name={artist.name}
           image={artist.images?.[0]?.url ?? "https://placehold.co/300x300"}

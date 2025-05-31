@@ -13,7 +13,7 @@
         placeholder="Daft Punk, The Weekend, etc."
         required
       />
-      <button type="submit" class="btn btn-primary">Suchen</button>
+      <button type="submit" class="btn spotify-color">Suchen</button>
     </form>
   </div>
 
