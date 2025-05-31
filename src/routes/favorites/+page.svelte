@@ -13,7 +13,6 @@
                 <ArtistCard
                     name={artist.name}
                     image={artist.image}
-                    genres={artist.genres}
                     popularity={artist.popularity}
                     followers={artist.followers}
                 />
