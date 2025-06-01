@@ -7,7 +7,7 @@
   const isFavorite = data?.isFavorite ?? false;
 </script>
 
-<div class="bg-black text-white min-vh-100 py-4">
+<div class="bg-black text-white py-4">
   <div class="container">
     <a href="#" onclick={history.back()} class="text-light mb-3 d-inline-block">← Zurück</a>
 

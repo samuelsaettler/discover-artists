@@ -1,7 +1,7 @@
-import { searchSpotifyArtists } from '$lib/server/spotify.js';
+import { searchSpotifyArtists } from "$lib/server/spotify.js";
 
 export async function load({ url }) {
-  const query = url.searchParams.get('q');
+  const query = url.searchParams.get("q");
 
   if (!query) {
     return { results: [] };

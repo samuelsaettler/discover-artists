@@ -4,7 +4,7 @@
   function formatDuration(ms) {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`; // Format für MM:SS, nicht 3:7 -> 3:07
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`; // Format für MM:SS, nicht 3:7 -> 3:07
   }
 </script>
 
@@ -14,7 +14,7 @@
     {#each tracks as track}
       <li class="list-group-item bg-dark text-white d-flex justify-content-between align-items-center border-bottom border-secondary">
         <span class="me-3">{track.name}: {formatDuration(track.duration_ms)}</span>
-        <div style="min-width: 150px;">
+        <div class="audio">
           <audio controls src={track.preview_url}></audio>
         </div>
       </li>

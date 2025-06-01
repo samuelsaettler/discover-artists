@@ -50,7 +50,7 @@ export async function createFavoriteArtist(artist, topTracks = []) {
     const doc = {
       _id: artist.id,
       name: artist.name,
-      image: artist.images?.[0]?.url ?? '',
+      image: artist.images?.[0]?.url ?? "",
       genres: artist.genres ?? [],
       popularity: artist.popularity ?? 0,
       followers: artist.followers?.total ?? 0,
@@ -66,7 +66,6 @@ export async function createFavoriteArtist(artist, topTracks = []) {
     const result = await artistCollection.insertOne(doc);
     if (result.acknowledged) {
       await updateGenres(artist.genres);
-      console.log('Genres', artist.genres, 'updated.');
     }
 
     return result.insertedId;
@@ -112,6 +111,7 @@ export async function updateGenres(genres = [], delta = 1) {
         { upsert: true }
       );
     }
+    console.log("Genres", genres, "updated for ", delta);
   } catch (err) {
     console.error("Error updating genres:", err);
   }

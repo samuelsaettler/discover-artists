@@ -1,5 +1,5 @@
 <script>
-  import '../app.css';
+  import "../app.css";
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">

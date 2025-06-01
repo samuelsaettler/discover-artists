@@ -9,7 +9,7 @@
 
     {#if genres.length > 0}
       <p class="card-text mb-0">
-        <strong>Genres:</strong> {genres.join(', ')}
+        <strong>Genres:</strong> {genres.join(", ")}
       </p>
     {/if}
 
