@@ -1,18 +1,39 @@
 import { fetchSpotifyArtist, fetchSpotifyTopTracks } from "$lib/server/spotify";
 import { createFavoriteArtist, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from "$lib/server/db";
 import { redirect } from "@sveltejs/kit";
+import { findPreviewUrl } from '$lib/server/previewUrlLibrary.js';
 
 export async function load({ params }) {
-    const artist = await fetchSpotifyArtist(params.id);
-    // console.log("Artist-Daten:", artist);
-    const topTracks = await fetchSpotifyTopTracks(params.id);
-    // console.log("TopTracks-Daten:", topTracks);
-    const existing = await getFavoriteArtistById(artist.id);
+    const artistId = params.id;
+    const existingFavorite = await getFavoriteArtistById(artistId);
+
+    let artist;
+    let topTracks;
+
+    if (existingFavorite) {
+        // Fals vorhanden dann nutze die Datenbank einträge
+        artist = existingFavorite;
+        console.log("Existierender Artist und TopTracks gefunden");
+        // console.log(artist);
+        topTracks = existingFavorite.topTracks;
+    } else {
+        artist = await fetchSpotifyArtist(artistId);
+        topTracks = await fetchSpotifyTopTracks(artistId);
+        console.log("Artist und TopTracks von Spotify geladen");
+        // console.log("Top Tracks:", topTracks);
+        topTracks = await Promise.all(topTracks.map(async (track) => {
+            if (!track.preview_url) {
+                const searchString = track.name + " " + artist.name;
+                track.preview_url = await findPreviewUrl(searchString);
+            }
+            return track;
+        }));
+    }
 
     return {
         artist,
         topTracks,
-        isFavorite: existing !== null // Überprüft ob der Künstler bereits favorisiert ist
+        isFavorite: existingFavorite !== null // Überprüft ob der Künstler bereits favorisiert ist
     };
 }
 

@@ -9,7 +9,8 @@
 <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-4">
     {#each artists as artist}
         <div class="col">
-            <a href={`/artist/${artist._id}`} class="text-decoration-none">
+            <!-- rel="external" hilft das die Daten nicht direkt wenn man drüberhovered geladen werden (für track preview suche)-->
+            <a href={`/artist/${artist._id}`} rel="external" class="text-decoration-none">
                 <ArtistCard
                     name={artist.name}
                     image={artist.image}

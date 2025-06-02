@@ -10,16 +10,15 @@ const artistCollection = db.collection("favoriteArtists");
 const genreCollection = db.collection("genres");
 
 //////////////////////////////////////////////////////////
-// Artist Functions (Spotify-ID als _id für Konsistenz)
+// Artist Funktionen (Spotify-ID als _id für Konsistenz und Unique)
 //////////////////////////////////////////////////////////
 
 // Alle gespeicherten Künstler abrufen
 export async function getFavoriteArtists() {
   try {
-    const artists = await artistCollection.find({}).toArray();
-    return artists.map(a => ({ ...a, _id: a._id.toString() })); // Konvertiere ObjectId zu String
+    return await artistCollection.find({}).toArray();
   } catch (err) {
-    console.error("Error loading artists:", err);
+    console.error("Fehler beim Laden von allen Künstler:", err);
     return [];
   }
 }
@@ -27,13 +26,9 @@ export async function getFavoriteArtists() {
 // Einzelnen Künstler abrufen (per Spotify-ID)
 export async function getFavoriteArtistById(spotifyId) {
   try {
-    const artist = await artistCollection.findOne({ _id: spotifyId });
-    if (artist) {
-      artist._id = artist._id.toString();
-    }
-    return artist;
+    return await artistCollection.findOne({ _id: spotifyId });
   } catch (err) {
-    console.error("Error loading artist:", err);
+    console.error("Fehler beim Laden vom Künstler:", err);
     return null;
   }
 }
@@ -43,7 +38,7 @@ export async function createFavoriteArtist(artist, topTracks = []) {
   try {
     const exists = await artistCollection.findOne({ _id: artist.id });
     if (exists) {
-      console.log(`Artist ${artist.name} already in favorites.`);
+      console.log("Artist: ", artist.name, " existiert schon");
       return exists._id;
     }
 
@@ -70,7 +65,7 @@ export async function createFavoriteArtist(artist, topTracks = []) {
 
     return result.insertedId;
   } catch (err) {
-    console.error("Error saving artist:", err);
+    console.error("Fehler beim speichern:", err);
     return null;
   }
 }
@@ -80,7 +75,7 @@ export async function deleteFavoriteArtistBySpotifyId(spotifyId) {
   try {
     const artist = await artistCollection.findOne({ _id: spotifyId });
     if (!artist) {
-      console.log(`No artist found with ID: ${spotifyId}`);
+      console.log("Kein Artist mit der ID: ", spotifyId, " gefunden.");
       return null;
     }
 
@@ -92,13 +87,13 @@ export async function deleteFavoriteArtistBySpotifyId(spotifyId) {
 
     return null;
   } catch (err) {
-    console.error("Error deleting artist:", err);
+    console.error("Fehler beim Löschen:", err);
     return null;
   }
 }
 
 //////////////////////////////////////////////////////////
-// Genre Functions
+// Genre Funktionen
 //////////////////////////////////////////////////////////
 
 // Genres hoch- oder runterzählen
@@ -111,9 +106,8 @@ export async function updateGenres(genres = [], delta = 1) {
         { upsert: true }
       );
     }
-    console.log("Genres", genres, "updated for ", delta);
   } catch (err) {
-    console.error("Error updating genres:", err);
+    console.error("Fehler beim update genre:", err);
   }
 }
 
@@ -127,7 +121,7 @@ export async function getTopGenres(limit = 10) {
       .toArray();
     return genres.map(g => ({ ...g, _id: g._id.toString() })); // Konvertiere ObjectId zu String
   } catch (err) {
-    console.error("Error loading genres:", err);
+    console.error("Fehler beim genre laden:", err);
     return [];
   }
 }
