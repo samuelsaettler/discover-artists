@@ -1,7 +1,7 @@
 import { fetchSpotifyArtist, fetchSpotifyTopTracks } from "$lib/server/spotify";
 import { createFavoriteArtist, getFavoriteArtistById, deleteFavoriteArtistBySpotifyId } from "$lib/server/db";
 import { redirect } from "@sveltejs/kit";
-import { findPreviewUrl } from '$lib/server/previewUrlLibrary.js';
+import { findPreviewUrl } from "$lib/server/previewUrlLibrary.js";
 
 export async function load({ params }) {
     const artistId = params.id;
@@ -21,6 +21,8 @@ export async function load({ params }) {
         topTracks = await fetchSpotifyTopTracks(artistId);
         console.log("Artist und TopTracks von Spotify geladen");
         // console.log("Top Tracks:", topTracks);
+        // Promise.all um die Tracksuche gleichzeitig und parallel zu machen (async)
+        // und wartet bis alle gefunden wurden, gibt die tracks oder fehler zurück
         topTracks = await Promise.all(topTracks.map(async (track) => {
             if (!track.preview_url) {
                 const searchString = track.name + " " + artist.name;

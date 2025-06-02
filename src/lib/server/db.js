@@ -96,7 +96,7 @@ export async function deleteFavoriteArtistBySpotifyId(spotifyId) {
 // Genre Funktionen
 //////////////////////////////////////////////////////////
 
-// Genres hoch- oder runterzählen
+// Genres um 1 pro genre hochzählen/erstellen oder runterzählen
 export async function updateGenres(genres = [], delta = 1) {
   try {
     for (const genre of genres) {
