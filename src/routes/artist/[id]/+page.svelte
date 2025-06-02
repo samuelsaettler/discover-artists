@@ -15,15 +15,16 @@
       <div class="col-md-4 d-flex flex-column">
         <ArtistCard
           name={artist.name}
-          image={artist.images?.[0]?.url ?? "https://placehold.co/300x300"}
+          image={artist.images?.[0]?.url || artist.image}
           genres={artist.genres}
           popularity={artist.popularity}
-          followers={artist.followers?.total ?? 0}
+          followers={artist.followers?.total ?? artist.followers}
         />
+        <!-- ?? Erlaubt auch 0 followers als erlaubt -->
 
         <form method="POST" class="mt-3">
           {#if isFavorite}
-            <input type="hidden" name="id" value={artist.id} />
+            <input type="hidden" name="id" value={artist._id} />
             <button type="submit" formaction="?/delete" class="btn btn-outline-danger w-100">
               Entfernen
             </button>

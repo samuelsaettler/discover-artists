@@ -7,6 +7,6 @@ export async function load({ url }) {
     return { results: [] };
   }
 
-  const results = await searchSpotifyArtists(query); // Default limit ist 10, kann angepasst werden
+  const results = await searchSpotifyArtists(query); // Default limit ist 10 resultate, kann angepasst werden
   return { results };
 }
